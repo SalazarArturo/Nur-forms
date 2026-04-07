@@ -5,18 +5,19 @@ const authenticate = (req, res, next) => {
   const token = authHeader && authHeader.split(' ')[1]
 
   if (!token) {
-    return res.status(401).json({ message: 'Token requerido' })
+    return res.status(401).json({ message: 'Token requerido'})
   }
 
   try {
     const payload = verifyToken(token)
-    req.user = payload
-    next()
+    req.user = payload;
+    next();
+
   } catch (error) {
-    return res.status(401).json({ message: 'Token inválido o expirado' })
+    return res.status(401).json({ message: 'Token inválido o expirado' });
   }
 }
-
+////////////////////////////////////////////////////////////////////////////////
 const authorize = (...roles) => {
   return (req, res, next) => {
     if (!roles.includes(req.user.role)) {
