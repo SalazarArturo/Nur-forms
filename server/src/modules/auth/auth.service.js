@@ -2,7 +2,7 @@ const bcrypt = require('bcryptjs')
 const userRepository = require('../../repositories/user.repository.js');
 const { generateAccessToken, generateRefreshToken } = require('../../utils/jwt')
 
-const register = async ({ email, password, full_name }) => {
+/*const register = async ({ email, password, full_name }) => {
   try {
 
     const existing = await userRepository.getUserByEmail(email);
@@ -43,7 +43,7 @@ const register = async ({ email, password, full_name }) => {
     throw error;
   }
 }
-
+*/
 const login = async ({ email, password }) => {
 
   const result = await userRepository.getUserByEmail(email)
@@ -70,4 +70,4 @@ const login = async ({ email, password }) => {
     }
   }
 }
-module.exports = { register, login }
+module.exports = {login}

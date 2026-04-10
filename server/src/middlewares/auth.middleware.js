@@ -18,10 +18,10 @@ const authenticate = (req, res, next) => {
   }
 }
 ////////////////////////////////////////////////////////////////////////////////
-const authorize = (...roles) => {
+const authorize = (...roles) => { //creo que esto deja parsar a cualquier usuario con un rol definido dentro de la app, no solo si es admin ..
   return (req, res, next) => {
     if (!roles.includes(req.user.role)) {
-      return res.status(403).json({ message: 'No tenés permisos para esto' })
+      return res.status(403).json({ message: 'No tiene permisos para esto.' })
     }
     next()
   }
