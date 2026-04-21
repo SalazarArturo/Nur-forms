@@ -16,7 +16,7 @@ async function getUserById(id){
   });
 }
 async function getUserByEmail(email) {
-  return await userModel.findOne({where: { email }});
+  return await userModel.findOne({where: {email}});
 }
 
 async function updateUserById(id, newData){
@@ -56,6 +56,9 @@ async function deleteUser(userId){
   }
 }
 
+async function getUserCampaigns(userId){
+  
+}
 module.exports = {
     getUserByEmail,
     getAllUsers,

@@ -27,4 +27,5 @@ const authorize = (...roles) => { //creo que esto deja parsar a cualquier usuari
   }
 }
 
+
 module.exports = { authenticate, authorize }

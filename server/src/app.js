@@ -10,6 +10,7 @@ require('./models')
 
 const authRoutes        = require('./modules/auth/auth.routes')
 const adminRoutes       = require('./modules/admin/admin.routes')
+const userRoutes        = require('./modules/users/users.route')
 const campaignsRoutes   = require('./modules/campaigns/campaigns.routes')
 const formsRoutes       = require('./modules/forms/forms.routes')
 const questionsRoutes   = require('./modules/questions/questions.routes')
@@ -32,8 +33,9 @@ app.use(express.json())
 app.use(limiter)
 
 app.use('/api/auth',        authRoutes)
-app.use('/api/users',       adminRoutes)
-app.use('/api/campaigns',   campaignsRoutes)
+app.use('/api/admin',       adminRoutes)
+//app.use('/api/user',        userRoutes)
+app.use('/api/campaigns',   campaignsRoutes) 
 app.use('/api/forms',       formsRoutes)
 app.use('/api/questions',   questionsRoutes)
 app.use('/api/submissions', submissionsRoutes)
@@ -45,7 +47,7 @@ app.use((req, res) => {
 })
 
 app.use((err, req, res, next) => {
-  console.error(err.stack)
+  console.error(err.message);
   res.status(500).json({ message: 'Error interno del servidor' })
 })
 
