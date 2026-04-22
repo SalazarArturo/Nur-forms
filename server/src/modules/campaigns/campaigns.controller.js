@@ -1,4 +1,4 @@
-const {getAllService, getByIdService, createService, updateService} = require('./campaigns.service')
+const {getAllService, getByIdService, createService, updateService, removeService} = require('./campaigns.service')
 
 const getAll = async (req, res, next) => {
   
@@ -46,11 +46,13 @@ const update = async (req, res, next) => {
   }
 }
 
-const remove = async (req, res) => {
+const remove = async (req, res, next) => {
   try {
-    await campaignsService.remove(req.params.id, req.user.id, req.user.role)
-    res.status(204).send()
+   const result = await removeService(req.params.id, req.user.id, req.user.role)
+   return res.status(204).json(result);
+
   } catch (error) {
+    if(error.message === 'Error al eliminar la campaña intente nuevamente') return next(error);
     res.status(400).json({ message: error.message })
   }
 }

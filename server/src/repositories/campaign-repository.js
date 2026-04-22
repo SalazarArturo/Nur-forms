@@ -76,6 +76,14 @@ async function updateCampaignState(id, newState){
     }
 }
 
+async function deleteCampaign(id){
+    try {
+        const result = await campaignModel.destroy({where: {id: id}})
+        return result; //cantidad de filas afectadas tras la operacion (tipo de dato number/int)
+    } catch (error) {
+        throw error
+    }
+}
 module.exports = {
     getAllUserCampaigns,
     createCampaign,
@@ -84,5 +92,6 @@ module.exports = {
     getAllCampaigns,
     getCampaignDetails,
     getCampaignById,
-    updateCampaignState
+    updateCampaignState,
+    deleteCampaign
 }

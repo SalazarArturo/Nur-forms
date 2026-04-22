@@ -10,7 +10,7 @@ router.get('/',                              authorize('admin', 'creator'), getA
 router.get('/:id',                           authorize('admin', 'creator'), getById) //check
 router.post('/',                             authorize('creator'), create) //check
 router.patch('/:id',                           authorize('admin', 'creator'), update) //check
-router.delete('/:id',                        authorize('admin', 'creator'), remove)
+router.delete('/:id',                        authorize('admin', 'creator'), remove) //check
 router.post('/:id/duplicate',                authorize('admin', 'creator'), duplicate)
 router.post('/:id/members',                  authorize('admin', 'creator'), addMember)
 router.delete('/:id/members/:memberId',      authorize('admin', 'creator'), removeMember)

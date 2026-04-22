@@ -7,7 +7,8 @@ const {
   getCampaignDetails,
   getCampaignById,
   createCampaign,
-  updateCampaignState
+  updateCampaignState,
+  deleteCampaign
 } = require('../../repositories/campaign-repository.js');
 
 const {getMembership} = require('../../repositories/campaign-member.repository.js');
@@ -118,7 +119,7 @@ const updateService = async (id, data, userId, userRole) => {
 
     const currentState = result.status; //estado actual
     const {newState} = data;
-
+    
     const validValues = ['active', 'closed', 'archived', 'draft'];
 
     const validValue = validValues.includes(newState);
@@ -156,16 +157,39 @@ const updateService = async (id, data, userId, userRole) => {
   }
 }
 
-const remove = async (id, userId, userRole) => {
-  const campaign = await Campaign.findByPk(id)
-  if (!campaign) throw new Error('Campaña no encontrada')
+const removeService = async (id, userId, userRole) => {
+  try {
 
-  if (userRole !== 'admin') {
-    const member = await CampaignMember.findOne({ where: { campaign_id: id, user_id: userId, role: 'owner' } })
-    if (!member) throw new Error('Solo el dueño puede eliminar esta campaña')
+    const existResult = await getCampaignById(id);
+    if(!existResult){
+      throw new Error('Campaña no encontrada');
+    }
+
+    const currentStatus = existResult.status;
+    if(currentStatus !== 'closed' && currentStatus !== 'archived'){
+      throw new Error('Estado de campaña invalido para eliminacion, cambie el estado para poder proceder');
+    }
+
+    const userMembership = await getMembership(id, userId);
+    if(!userMembership){
+      throw new Error('No forma parte de esta campaña');
+    }
+    if(userMembership.role !== 'owner'){
+      throw new Error('No tiene los permisos para elimunar esta campaña');
+    }
+
+    const result = await deleteCampaign(id);
+    if(result === 0){
+      throw new Error ('Error al eliminar la campaña intente nuevamente');
+    }
+
+    return{
+      message: 'Campaña eliminada exitosamente'
+    }
+
+  } catch (error) {
+    throw error;
   }
-
-  await campaign.destroy()
 }
 
 const duplicate = async (id, userId) => {
@@ -205,4 +229,4 @@ const removeMember = async (campaignId, memberId, requesterId, requesterRole) =>
   await CampaignMember.destroy({ where: { id: memberId } })
 }
 
-module.exports = { getAllService, getByIdService, createService, updateService}
+module.exports = { getAllService, getByIdService, createService, updateService, removeService}
