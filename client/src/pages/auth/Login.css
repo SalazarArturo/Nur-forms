@@ -52,8 +52,7 @@
   width: 110px;
   height: 56px;
   object-fit: contain;
-  filter: sepia(1) saturate(7.5) hue-rotate(355deg) brightness(1.08) contrast(1.08)
-    drop-shadow(0 0 16px rgba(250, 204, 21, 0.3));
+  filter: sepia(1) saturate(1.5) hue-rotate(345deg) brightness(1.1);
 }
 
 .login-brand h1 {

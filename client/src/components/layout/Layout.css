@@ -35,7 +35,7 @@
   width: 32px;
   height: 32px;
   object-fit: contain;
-  filter: sepia(1) saturate(6) hue-rotate(355deg) brightness(1.05) contrast(1.08);
+  filter: sepia(1) saturate(1.5) hue-rotate(345deg) brightness(1.1);
 }
 
 .sidebar__name {

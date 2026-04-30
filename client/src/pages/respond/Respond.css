@@ -31,7 +31,7 @@
   height: 32px;
   border-radius: 8px;
   object-fit: contain;
-  filter: brightness(1.2) invert(1);
+  filter: sepia(1) saturate(1.5) hue-rotate(345deg) brightness(1.1);
 }
 
 .respond-form__brand {

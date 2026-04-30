@@ -30,7 +30,7 @@ box-shadow: 0 10px 30px rgba(15, 32, 62, 0.08);
 .login-logo {
   width: 100px;
   height: 50px;
-  filter: brightness(0);
+  filter: sepia(1) saturate(1.5) hue-rotate(345deg) brightness(1.1);
 }
 
 .login-brand h1 {
