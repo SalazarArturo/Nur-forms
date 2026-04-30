@@ -7,7 +7,7 @@
 .sidebar {
   width: var(--sidebar-w);
   min-height: 100svh;
-  background: var(--bg-card);
+  background: linear-gradient(180deg, #0F6CBF 0%, #0A4A8A 100%);
   border-right: 1px solid var(--border);
   display: flex;
   flex-direction: column;
@@ -41,7 +41,7 @@
 .sidebar__name {
   font-weight: 700;
   font-size: 16px;
-  color: var(--text-h);
+  color: #ffffff;
   letter-spacing: -0.3px;
 }
 
@@ -59,7 +59,7 @@
   gap: 10px;
   padding: 9px 10px;
   border-radius: var(--radius);
-  color: var(--text);
+  color: rgba(255, 255, 255, 0.85);
   font-size: 13px;
   font-weight: 500;
   text-decoration: none;
@@ -67,18 +67,20 @@
 }
 
 .sidebar__link:hover {
-  background: var(--bg-subtle);
-  color: var(--text-h);
+  background: rgba(255, 255, 255, 0.15);
+  color: #ffffff;
   text-decoration: none;
 }
 
 .sidebar__link--active {
-  background: var(--brand-bg);
-  color: var(--brand);
+  background: rgba(255, 255, 255, 0.25);
+  color: #ffffff;
+  border-left: 3px solid #FCCC15;
+  padding-left: 7px;
 }
 
 .sidebar__link--active svg {
-  color: var(--brand);
+  color: #FCCC15;
 }
 
 .sidebar__footer {
@@ -101,8 +103,8 @@
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  background: var(--brand-bg);
-  color: var(--brand);
+  background: rgba(255, 255, 255, 0.25);
+  color: #ffffff;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -121,7 +123,7 @@
 .sidebar__user-name {
   font-size: 12px;
   font-weight: 600;
-  color: var(--text-h);
+  color: #ffffff;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
