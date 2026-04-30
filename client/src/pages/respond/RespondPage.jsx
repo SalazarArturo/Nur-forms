@@ -2,6 +2,7 @@ import { useEffect, useState, useRef } from 'react'
 import { useParams } from 'react-router-dom'
 import { formsApi, submissionsApi } from '../../api/services'
 import { Loading, Alert } from '../../components/ui'
+import logo from '../../assets/nur_logo.png'
 import './Respond.css'
 
 export default function RespondPage() {
@@ -131,6 +132,14 @@ export default function RespondPage() {
     <div className="respond-page">
       <div className="respond-form" style={{ '--primary': primaryColor }}>
 
+        {/* Header con logo */}
+        <div className="respond-form__header">
+          <img src={logo} alt="NUR" className="respond-form__logo" />
+          <div className="respond-form__brand">
+            <span className="respond-form__brand-name">FormsNUR</span>
+          </div>
+        </div>
+
         {/* Error state */}
         {step === 'error' && (
           <div className="respond-state">
@@ -143,12 +152,8 @@ export default function RespondPage() {
         {/* Welcome */}
         {step === 'welcome' && form && (
           <div className="respond-state">
-            <div className="respond-form__brand" style={{ marginBottom: 24 }}>
-              <div className="respond-form__dot" style={{ background: primaryColor }} />
-              <span style={{ fontWeight: 600, fontSize: 13, color: 'var(--text-muted)' }}>FormsNUR</span>
-            </div>
-            <h1 style={{ fontSize: 26, marginBottom: 10 }}>{form.title}</h1>
-            {form.description && <p style={{ color: 'var(--text)', marginBottom: 16 }}>{form.description}</p>}
+            <h1 style={{ fontSize: 26, marginBottom: 6, color: '#0F6CBF' }}>{form.title}</h1>
+            {form.description && <p style={{ color: '#6B7280', marginBottom: 16, fontSize: 15 }}>{form.description}</p>}
             {form.welcome_message && (
               <div className="respond-welcome-msg">{form.welcome_message}</div>
             )}
