@@ -1,5 +1,6 @@
 import { NavLink, useNavigate } from 'react-router-dom'
 import useAuthStore from '../../store/authStore'
+import logo from '../../assets/nur_logo.png'
 import './Layout.css'
 
 const navItems = [
@@ -52,12 +53,7 @@ export default function Layout({ children }) {
     <div className="layout">
       <aside className="sidebar">
         <div className="sidebar__brand">
-          <div className="sidebar__logo">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-              <rect width="24" height="24" rx="6" fill="var(--brand)"/>
-              <path d="M6 8h12M6 12h8M6 16h10" stroke="#fff" strokeWidth="2" strokeLinecap="round"/>
-            </svg>
-          </div>
+          <img src={logo} alt="NUR" className="sidebar__logo-img" />
           <span className="sidebar__name">FormsNUR</span>
         </div>
 

@@ -31,6 +31,13 @@
   flex-shrink: 0;
 }
 
+.sidebar__logo-img {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+  filter: sepia(1) saturate(6) hue-rotate(355deg) brightness(1.05) contrast(1.08);
+}
+
 .sidebar__name {
   font-weight: 700;
   font-size: 16px;

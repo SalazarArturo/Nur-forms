@@ -26,7 +26,7 @@
   position: relative;
   width: 100%;
   max-width: 380px;
-  background: rgba(255, 255, 255, 0.86);
+  background: rgba(255, 255, 255, 0.45);
   border: 1px solid rgba(59, 130, 246, 0.18);
   border-radius: 24px;
   padding: 34px 30px;
@@ -72,9 +72,9 @@
 
 .login-error {
   font-size: 13px;
-  color: #1d4ed8;
-  background: rgba(219, 234, 254, 0.92);
-  border: 1px solid rgba(59, 130, 246, 0.28);
+  color: #dc2626;
+  background: rgba(30, 58, 138, 0.75);
+  border: 1px solid rgba(220, 38, 38, 0.5);
   padding: 8px 12px;
   border-radius: 14px;
   margin: 0;

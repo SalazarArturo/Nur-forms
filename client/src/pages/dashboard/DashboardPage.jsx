@@ -12,7 +12,7 @@ export default function DashboardPage() {
   const navigate = useNavigate()
 
   useEffect(() => {
-    campaignsApi.getAll().then(r => setCampaigns(r.data)).catch(() => {}).finally(() => setLoading(false))
+    campaignsApi.getAll().then(r => setCampaigns(r.data.campaigns || [])).catch(() => {}).finally(() => setLoading(false))
   }, [])
 
   const stats = {
