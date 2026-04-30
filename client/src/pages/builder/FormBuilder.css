@@ -92,22 +92,24 @@
 
 .builder__type-btn {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 6px;
-  padding: 7px 8px;
+  gap: 8px;
+  padding: 12px;
   background: var(--bg-card);
   border: 1px solid var(--border);
-  border-radius: var(--radius);
+  border-radius: var(--radius-lg);
   font-family: var(--font);
   font-size: 12px;
   font-weight: 500;
   color: var(--text-h);
   cursor: pointer;
-  transition: all 0.12s;
-  white-space: nowrap;
-  overflow: hidden;
+  transition: all 0.15s;
+  white-space: normal;
+  text-align: center;
+  line-height: 1.3;
 }
-.builder__type-btn:hover { border-color: var(--brand-border); background: var(--brand-bg); color: var(--brand); }
+.builder__type-btn:hover { border-color: var(--brand); background: var(--brand-bg); color: var(--brand); box-shadow: var(--shadow-sm); }
 
 /* Right editor panel */
 .builder__editor {

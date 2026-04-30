@@ -1,4 +1,4 @@
-const {getAllService, getByIdService, createService, updateService, removeService} = require('./campaigns.service')
+const {getAllService, getByIdService, createService, updateService, removeService, duplicate, addMember, removeMember} = require('./campaigns.service')
 
 const getAll = async (req, res, next) => {
   
@@ -57,31 +57,31 @@ const remove = async (req, res, next) => {
   }
 }
 
-const duplicate = async (req, res) => {
+const duplicateController = async (req, res) => {
   try {
-    const campaign = await campaignsService.duplicate(req.params.id, req.user.id)
+    const campaign = await duplicate(req.params.id, req.user.id)
     res.status(201).json(campaign)
   } catch (error) {
     res.status(400).json({ message: error.message })
   }
 }
 
-const addMember = async (req, res) => {
+const addMemberController = async (req, res) => {
   try {
-    const member = await campaignsService.addMember(req.params.id, req.body, req.user.id, req.user.role)
+    const member = await addMember(req.params.id, req.body, req.user.id, req.user.role)
     res.status(201).json(member)
   } catch (error) {
     res.status(400).json({ message: error.message })
   }
 }
 
-const removeMember = async (req, res) => {
+const removeMemberController = async (req, res) => {
   try {
-    await campaignsService.removeMember(req.params.id, req.params.memberId, req.user.id, req.user.role)
+    await removeMember(req.params.id, req.params.memberId, req.user.id, req.user.role)
     res.status(204).send()
   } catch (error) {
     res.status(400).json({ message: error.message })
   }
 }
 
-module.exports = {getAll, getById, create, update, remove, duplicate, addMember, removeMember }
+module.exports = {getAll, getById, create, update, remove, duplicateController, addMemberController, removeMemberController }

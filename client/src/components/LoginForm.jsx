@@ -1,88 +1,63 @@
 import { useState } from 'react'
-import axios from 'axios'
-import './LoginForm.css'
+import useAuthStore from '../store/authStore'
 import logo from '../assets/nur_logo.png'
+import './LoginForm.css'
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000'
-
-function LoginForm() {
+export default function LoginForm({ onSuccess }) {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState('')
-  const [success, setSuccess] = useState('')
+  const { login, loading, error, clearError } = useAuthStore()
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    setLoading(true)
-    setError('')
-    setSuccess('')
-
+    clearError()
     try {
-      const res = await axios.post(
-        API_URL + '/auth/login',
-        { email, password },
-        {
-          withCredentials: true,
-          headers: { 'Content-Type': 'application/json' }
-        }
-      )
-
-      if (res.data?.success) {
-        setSuccess(res.data.message || 'Login exitoso')
-      } else {
-        setError('No se pudo iniciar sesión')
-      }
-    } catch (err) {
-      setError(
-        err.response?.data?.error ||
-        err.response?.data?.message ||
-        'Error al conectar con el servidor'
-      )
-    } finally {
-      setLoading(false)
+      const user = await login(email, password)
+      if (onSuccess) onSuccess(user)
+    } catch {
+      // error is handled in store
     }
   }
 
   return (
-    <main className="login-page">
-      <form className="login-card" onSubmit={handleSubmit}>
-        <div className="login-brand">
-          <img src={logo} alt="FormsNur logo" className="login-logo" />
-          <h1>FormsNur</h1>
-        </div>
+    <form className="login-card" onSubmit={handleSubmit}>
+      <div className="login-brand">
+        <img src={logo} alt="FormsNur logo" className="login-logo" />
+        <h1>FormsNur</h1>
+      </div>
 
+      <div className="field">
         <label htmlFor="email">Correo</label>
         <input
           id="email"
           type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          placeholder="admin@admin.com"
+          placeholder="admin@nur.edu.bo"
           autoComplete="email"
           required
         />
+      </div>
 
+      <div className="field">
         <label htmlFor="password">Contraseña</label>
         <input
           id="password"
           type="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          placeholder="Tu contraseña"
+          placeholder="••••••••"
           autoComplete="current-password"
           required
         />
+      </div>
 
-        <button type="submit" disabled={loading}>
-          {loading ? 'Ingresando...' : 'Entrar'}
-        </button>
+      {error && <p className="login-error">{error}</p>}
 
-        {error && <p className="error">{error}</p>}
-        {success && <p className="success">{success}</p>}
-      </form>
-    </main>
+      <button type="submit" className="btn btn-primary btn-lg w-full" disabled={loading}>
+        {loading ? <span className="spinner" style={{ width: 16, height: 16, borderWidth: 2 }} /> : null}
+        {loading ? 'Ingresando...' : 'Iniciar sesión'}
+      </button>
+    </form>
   )
 }
-
-export default LoginForm
