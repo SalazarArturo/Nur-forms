@@ -9,12 +9,12 @@ import QuestionEditor from './QuestionEditor'
 import './FormBuilder.css'
 
 const QUESTION_TYPES = [
-  { value: 'single_choice', label: 'Selección única', icon: '🔘' },
-  { value: 'multiple_choice', label: 'Selección múltiple', icon: '☑️' },
-  { value: 'true_false', label: 'Verdadero / Falso', icon: '✅' },
-  { value: 'matching', label: 'Relacionar conceptos', icon: '🔗' },
-  { value: 'short_text', label: 'Texto corto', icon: '📝' },
-  { value: 'long_text', label: 'Texto largo', icon: '📄' },
+  { value: 'single_choice', label: 'Selección única', icon: '◯' },
+  { value: 'multiple_choice', label: 'Selección múltiple', icon: '☐' },
+  { value: 'true_false', label: 'Verdadero / Falso', icon: '✓' },
+  { value: 'matching', label: 'Relacionar conceptos', icon: '↔' },
+  { value: 'short_text', label: 'Texto corto', icon: '⎯' },
+  { value: 'long_text', label: 'Texto largo', icon: '≡' },
 ]
 
 function SortableQuestion({ question, selected, onSelect, onDelete }) {

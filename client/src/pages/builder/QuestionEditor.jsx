@@ -185,12 +185,12 @@ export default function QuestionEditor({ question, onSave, saving }) {
 
 function getTypeLabel(type) {
   const labels = {
-    single_choice: '🔘 Selección única',
-    multiple_choice: '☑️ Selección múltiple',
-    true_false: '✅ Verdadero / Falso',
-    matching: '🔗 Relacionar',
-    short_text: '📝 Texto corto',
-    long_text: '📄 Texto largo',
+    single_choice: 'Selección única',
+    multiple_choice: 'Selección múltiple',
+    true_false: 'Verdadero / Falso',
+    matching: 'Relacionar',
+    short_text: 'Texto corto',
+    long_text: 'Texto largo',
   }
   return labels[type] || type
 }

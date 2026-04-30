@@ -26,7 +26,7 @@ export default function DashboardPage() {
     <div>
       <div className="page-header">
         <div>
-          <h1>Bienvenido, {user?.full_name?.split(' ')[0]} 👋</h1>
+          <h1>Bienvenido, {user?.full_name || 'Usuario'}</h1>
           <p className="text-muted" style={{ marginTop: 4 }}>Panel de control del sistema de encuestas</p>
         </div>
         <button className="btn btn-primary" onClick={() => navigate('/campaigns')}>
