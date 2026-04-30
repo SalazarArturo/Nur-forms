@@ -71,9 +71,9 @@
 
 .login-error {
   font-size: 13px;
-  color: #dc2626;
-  background: rgba(30, 58, 138, 0.75);
-  border: 1px solid rgba(220, 38, 38, 0.5);
+  color: #f87171;
+  background: hsla(0, 72%, 51%, 0.5);
+  border: 1px solid hsla(0, 72%, 51%, 0.5);
   padding: 8px 12px;
   border-radius: 14px;
   margin: 0;
