@@ -30,7 +30,7 @@ box-shadow: 0 10px 30px rgba(15, 32, 62, 0.08);
 .login-logo {
   width: 100px;
   height: 50px;
-  filter: brightness(0);
+  filter: sepia(1) saturate(1.5) hue-rotate(345deg) brightness(1.1);
 }
 
 .login-brand h1 {
@@ -62,6 +62,13 @@ outline: none;
 .login-card input:focus {
 border-color: #2363eb;
 box-shadow: 0 0 0 3px rgba(35, 99, 235, 0.15);
+}
+
+/* placeholder visible as light blue guide */
+.login-card .field input::placeholder,
+.login-card input::placeholder {
+  color: rgba(37, 99, 235, 0.42);
+  opacity: 1; /* ensure visibility */
 }
 
 .login-card button {

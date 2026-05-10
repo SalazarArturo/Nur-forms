@@ -1,45 +1,72 @@
 .respond-page {
   min-height: 100svh;
-  background: linear-gradient(135deg, #f8fafc 0%, #f0f9ff 100%);
+  background: linear-gradient(135deg, #EBF4FA 0%, #F0F9FF 100%);
   display: flex;
   align-items: flex-start;
   justify-content: center;
-  padding: 40px 20px;
+  padding: 32px 16px;
 }
 
 .respond-form {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-xl);
-  box-shadow: var(--shadow-lg);
+  background: #ffffff;
+  border: 1px solid #B3D9F2;
+  border-radius: 16px;
+  box-shadow: 0 4px 24px rgba(15, 108, 191, 0.12);
   width: 100%;
-  max-width: 620px;
+  max-width: 640px;
   overflow: hidden;
 }
 
-.respond-form__top {
-  padding: 24px 28px 0;
+.respond-form__header {
+  background: linear-gradient(135deg, #0F6CBF 0%, #1B7FD4 100%);
+  padding: 20px 24px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-bottom: 1px solid #B3D9F2;
 }
 
-.respond-form__top h2 {
-  font-size: 20px;
-  margin-bottom: 16px;
+.respond-form__logo {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  object-fit: contain;
+  filter: sepia(1) saturate(1.5) hue-rotate(345deg) brightness(1.1);
 }
 
 .respond-form__brand {
   display: flex;
   align-items: center;
   gap: 8px;
+  color: #ffffff;
 }
 
-.respond-form__dot {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
+.respond-form__brand-name {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: -0.3px;
+  color: #ffffff;
+}
+
+.respond-form__top {
+  padding: 28px 28px 0;
+}
+
+.respond-form__top h2 {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: #0F6CBF;
+}
+
+.respond-form__top p {
+  color: #6B7280;
+  font-size: 15px;
+  margin-bottom: 16px;
 }
 
 .respond-state {
-  padding: 52px 32px;
+  padding: 48px 32px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -47,62 +74,79 @@
   gap: 12px;
 }
 
-.respond-state h2 { font-size: 22px; }
-.respond-state p { color: var(--text); max-width: 380px; }
+.respond-state h2 {
+  font-size: 26px;
+  font-weight: 700;
+  color: #0F6CBF;
+  margin-bottom: 8px;
+}
+.respond-state p {
+  color: #6B7280;
+  max-width: 380px;
+  font-size: 15px;
+  line-height: 1.5;
+}
 
 .respond-state__icon {
-  width: 64px;
-  height: 64px;
+  width: 72px;
+  height: 72px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 28px;
+  font-size: 32px;
   font-weight: 700;
-  margin-bottom: 8px;
+  margin-bottom: 12px;
 }
-.respond-state__icon--success { background: #dcfce7; color: #16a34a; }
-.respond-state__icon--error { background: var(--danger-bg); color: var(--danger); }
+.respond-state__icon--success {
+  background: rgba(15, 108, 191, 0.15);
+  color: #0F6CBF;
+}
+.respond-state__icon--error {
+  background: rgba(220, 38, 38, 0.15);
+  color: #DC2626;
+}
 
 .respond-welcome-msg {
-  background: var(--brand-bg);
-  border-left: 4px solid var(--brand);
-  border-radius: var(--radius);
-  padding: 12px 16px;
+  background: rgba(15, 108, 191, 0.08);
+  border-left: 4px solid #0F6CBF;
+  border-radius: 8px;
+  padding: 14px 16px;
   text-align: left;
   font-size: 14px;
-  color: var(--text);
+  color: #1F2937;
   width: 100%;
+  margin-bottom: 24px;
 }
 
-/* Progress bar */
 .respond-progress {
-  height: 4px;
-  background: var(--bg-subtle);
-  border-radius: 2px;
-  margin-bottom: 4px;
+  height: 6px;
+  background: rgba(15, 108, 191, 0.1);
+  border-radius: 3px;
+  margin-bottom: 6px;
   overflow: hidden;
 }
 .respond-progress__bar {
   height: 100%;
-  border-radius: 2px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, #0F6CBF, #1B7FD4);
   transition: width 0.4s ease;
 }
 
 /* Questions */
 .respond-questions {
-  padding: 20px 28px;
+  padding: 28px 28px;
   display: flex;
   flex-direction: column;
   gap: 0;
 }
 
 .respond-question {
-  padding: 20px 0;
-  border-bottom: 1px solid var(--border);
+  padding: 24px 0;
+  border-bottom: 1px solid #E5E7EB;
 }
 .respond-question:last-child { border-bottom: none; }
-.respond-question--error .respond-question__label { color: var(--danger); }
+.respond-question--error .respond-question__label { color: #DC2626; }
 
 .respond-question__label {
   display: flex;
@@ -117,14 +161,16 @@
 
 .respond-question__num {
   flex-shrink: 0;
-  width: 26px;
-  height: 26px;
+  width: 28px;
+  height: 28px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 12px;
   font-weight: 700;
+  background: rgba(15, 108, 191, 0.15);
+  color: #0F6CBF;
 }
 
 /* Options */
@@ -138,18 +184,30 @@
 .respond-option {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 10px 14px;
-  border: 1.5px solid var(--border);
-  border-radius: var(--radius-md);
+  gap: 12px;
+  padding: 12px 16px;
+  border: 1.5px solid #D1D5DB;
+  border-radius: 10px;
   cursor: pointer;
-  font-size: 14px;
-  transition: all 0.12s;
+  font-size: 15px;
+  transition: all 0.15s ease;
   user-select: none;
+  background: #ffffff;
 }
-.respond-option:hover { border-color: var(--border-strong); background: var(--bg-subtle); }
-.respond-option--selected { font-weight: 500; }
-.respond-option input { flex-shrink: 0; }
+.respond-option:hover {
+  border-color: #0F6CBF;
+  background: rgba(15, 108, 191, 0.05);
+}
+.respond-option--selected {
+  border-color: #0F6CBF;
+  background: rgba(15, 108, 191, 0.1);
+  font-weight: 500;
+  color: #0F6CBF;
+}
+.respond-option input {
+  flex-shrink: 0;
+  accent-color: #0F6CBF;
+}
 
 /* Matching */
 .respond-matching {
@@ -182,5 +240,35 @@
 
 /* Bottom submit area */
 .respond-form > div:last-child {
-  padding: 0 28px 28px;
+  padding: 24px 28px 28px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .respond-page {
+    padding: 20px 12px;
+  }
+  .respond-form {
+    max-width: 100%;
+  }
+  .respond-form__top {
+    padding: 20px 20px 0;
+  }
+  .respond-form__top h2 {
+    font-size: 20px;
+  }
+  .respond-questions {
+    padding: 20px;
+  }
+  .respond-question {
+    padding: 20px 0;
+  }
+  .respond-state {
+    padding: 40px 24px;
+  }
+  .respond-form > div:last-child {
+    padding: 20px;
+  }
 }

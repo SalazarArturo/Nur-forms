@@ -21,7 +21,7 @@ export default function CampaignsPage() {
   const load = () => {
     setLoading(true)
     campaignsApi.getAll()
-      .then(r => setCampaigns(r.data))
+      .then(r => setCampaigns(r.data.campaigns || []))
       .catch(() => {})
       .finally(() => setLoading(false))
   }

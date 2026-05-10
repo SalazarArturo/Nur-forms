@@ -26,15 +26,14 @@ const getAllService = async (role, userId) => {
   }
 
   if(role === 'creator'){
-    try { //aqui podriamos hacer la segunda llamada al respository para obtener las campañas en donde el usuario es colaborador
+    try {
       const [ownCampaigns, memberCampaigns] = await Promise.all([
         getAllUserCampaigns(userId),
         getAsMemberCampaigns(userId)
       ]);
-      return{
-        ownCampaigns,
-        memberCampaigns
-      }
+      // Combinar ambas listas en un solo array
+      const allCampaigns = [...ownCampaigns, ...memberCampaigns];
+      return allCampaigns;
 
     } catch (error) {
       throw error
@@ -229,4 +228,4 @@ const removeMember = async (campaignId, memberId, requesterId, requesterRole) =>
   await CampaignMember.destroy({ where: { id: memberId } })
 }
 
-module.exports = { getAllService, getByIdService, createService, updateService, removeService}
+module.exports = { getAllService, getByIdService, createService, updateService, removeService, duplicate, addMember, removeMember}
