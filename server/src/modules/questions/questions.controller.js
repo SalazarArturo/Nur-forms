@@ -2,10 +2,10 @@ const questionsService = require('./questions.service')
 
 const getByForm = async (req, res) => {
   try {
-    const questions = await questionsService.getByForm(req.params.formId)
+    const questions = await questionsService.getByForm(req.params.formId,req.user.id, req.user.role)
     res.status(200).json(questions)
   } catch (error) {
-    res.status(500).json({ message: error.message })
+    res.status(403).json({ message: error.message })
   }
 }
 

@@ -12,7 +12,8 @@ const checkFormAccess = async (formId, userId, userRole) => {
   return form
 }
 
-const getByForm = async (formId) => {
+const getByForm = async (formId, userId, userRole) => {
+  await checkFormAccess(formId, userId, userRole)
   return Question.findAll({
     where: { form_id: formId },
     include: [{ model: Option, as: 'options', order: [['position', 'ASC']] }],
