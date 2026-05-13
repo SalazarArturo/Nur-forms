@@ -41,10 +41,11 @@ const update = async (req, res, next) => {
     const campaign = await updateService(req.params.id, req.body, req.user.id, req.user.role)
     return res.status(200).json(campaign)
   } catch (error) {
-    if(error.message === 'No se pudo actualizar estado, intente nuevamente') return res.status(500).json({message: error.message}); 
+    if(error.message === 'No se pudo actualizar el estado, intente nuevamente') return res.status(500).json({message: error.message});
     res.status(400).json({message: error.message});
   }
 }
+
 
 const remove = async (req, res, next) => {
   try {

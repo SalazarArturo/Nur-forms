@@ -7,6 +7,10 @@ import './Respond.css'
 
 export default function RespondPage() {
   const { formId } = useParams()
+  
+  const [searchParams] = useSearchParams()
+  const invitationToken = searchParams.get('token') || null
+
   const [form, setForm] = useState(null)
   const [questions, setQuestions] = useState([])
   const [loading, setLoading] = useState(true)
@@ -38,7 +42,7 @@ export default function RespondPage() {
 
   const startSubmission = async () => {
     try {
-      const res = await submissionsApi.start(formId, {})
+      const res = await submissionsApi.start(formId, { invitationToken })
       setSubmission(res.data)
       setRespondentToken(res.data.respondent_token)
       setStep('answering')
@@ -107,7 +111,7 @@ export default function RespondPage() {
       let rToken = respondentToken
 
       if (!subId) {
-        const res = await submissionsApi.start(formId, {})
+        const res = await submissionsApi.start(formId, {invitationToken})
         subId = res.data.id
         rToken = res.data.respondent_token
       }

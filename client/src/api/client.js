@@ -15,8 +15,17 @@ api.interceptors.response.use(
   (res) => res,
   (err) => {
     if (err.response?.status === 401) {
-      localStorage.removeItem('token')
-      window.location.href = '/login'
+      const url = err.config?.url || ''
+      const isPublicRoute =
+        url.includes('/submissions/form/') ||
+        url.includes('/submissions/token/') ||
+        url.includes('/forms/public/') ||
+        url.includes('/invitations/form/') && url.includes('/validate')
+
+      if (!isPublicRoute) {
+        localStorage.removeItem('token')
+        window.location.href = '/login'
+      }
     }
     return Promise.reject(err)
   }

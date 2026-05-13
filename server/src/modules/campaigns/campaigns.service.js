@@ -111,46 +111,64 @@ const createService = async (campaignData, ownerId) => {
 
 const updateService = async (id, data, userId, userRole) => {
   try {
-    //primero confirmamos que la campaña existe
-    const result = await getCampaignById(id);
-    if(!result) throw new Error('Campaña inexistente');
-    
-
-    const currentState = result.status; //estado actual
-    const {newState} = data;
-    
-    const validValues = ['active', 'closed', 'archived', 'draft'];
-
-    const validValue = validValues.includes(newState);
-
-     const validTransitions = { //transiciones validas de un estado a otro
-      draft:['active', 'closed'],
-      active:['draft', 'closed'],
-      closed:['archived'],
-      archived: []
+    const campaign = await getCampaignById(id);
+    if (!campaign) throw new Error('Campana inexistente');
+ 
+    if (campaign.status === 'archived') throw new Error('Esta campana no se puede editar');
+ 
+    const { name, description, starts_at, ends_at, status: newState } = data;
+ 
+    // --- Cambio de estado (opcional) ---
+    if (newState !== undefined && newState !== campaign.status) {
+      const validTransitions = {
+        draft:    ['active', 'closed'],
+        active:   ['draft', 'closed'],
+        closed:   ['archived'],
+        archived: []
+      };
+      const validValues = ['active', 'closed', 'archived', 'draft'];
+      if (!validValues.includes(newState)) throw new Error('Estado invalido');
+ 
+      const isValidTransition = validTransitions[campaign.status].includes(newState);
+      if (!isValidTransition) throw new Error('Transicion de estado no permitida');
+ 
+      const rows = await updateCampaignState(id, newState);
+      if (rows === 0) throw new Error('No se pudo actualizar el estado, intente nuevamente');
     }
-
-    if(validValue){
-        if(currentState === 'archived') throw new Error('Esta campaña no se puede editar');
-
-        const isValidStatusTransition = validTransitions[currentState].includes(newState);
-
-        if(isValidStatusTransition){
-
-          const result = await updateCampaignState(id, newState);
-          if(result === 0){
-            throw new Error('No se pudo actualizar estado, intente nuevamente');
-          }
-          return {
-            message: 'Estado actualizado con exito'
-          };
-        }else{
-          throw new Error('Entrada invalida');
-        }
+ 
+    // --- Actualizacion de metadatos (opcional) ---
+    const metaUpdates = {};
+ 
+    if (name !== undefined) {
+      if (typeof name !== 'string' || name.trim() === '') throw new Error('El nombre es obligatorio');
+      metaUpdates.name = name.trim();
     }
-
-    throw new Error('Entrada invalida');
-
+ 
+    if (description !== undefined) {
+      metaUpdates.description = description ?? '';
+    }
+ 
+    if (starts_at !== undefined || ends_at !== undefined) {
+      const resolvedStart = starts_at || null;
+      const resolvedEnd   = ends_at   || null;
+ 
+      if (resolvedStart && resolvedEnd) {
+        const startDate = new Date(resolvedStart + 'T00:00:00');
+        const endDate   = new Date(resolvedEnd   + 'T00:00:00');
+        if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) throw new Error('Formato de fecha invalido');
+        if (endDate < startDate) throw new Error('La fecha de finalizacion no puede ser anterior a la de inicio');
+      }
+ 
+      metaUpdates.starts_at = resolvedStart;
+      metaUpdates.ends_at   = resolvedEnd;
+    }
+ 
+    if (Object.keys(metaUpdates).length > 0) {
+      await campaign.update(metaUpdates);
+    }
+ 
+    return { message: 'Campana actualizada con exito' };
+ 
   } catch (error) {
     throw error;
   }
