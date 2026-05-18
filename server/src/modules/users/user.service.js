@@ -1,64 +1,42 @@
-/*const {getAllUserCampaigns, createCampaign} = require('../../repositories/campaign-repository.js');
+const userRepository = require('../../repositories/user.repository.js');
 
-async function getUserCampaignsService(userId){
-    try {
-        const campaigns = await getAllUserCampaigns(userId);
-        return campaigns;
-    } catch (error) {
-        throw error;
-    }
-}
+const getAllUsers = async () => {
+  const users = await userRepository.getAllUsers();
+  return users;
+};
 
-async function createCampaignService(campaignData, ownerId){
-   // const { name, description, starts_at, ends_at } = req.body;
+const getUserById = async (id) => {
+  const user = await userRepository.getUserById(id);
+  if (!user) throw new Error('Usuario no encontrado');
+  return user;
+};
 
-   if(campaignData.name.trim() == ''){
-    throw new Error('Nombre de campaha es obligatorio');
-   }
+const searchUsers = async (emailQuery) => {
+  if (!emailQuery || emailQuery.trim() === '') throw new Error('Ingrese un email para buscar');
+  return await userRepository.getUserByEmail(emailQuery.trim());
+};
 
-   if(campaignData.starts_at && campaignData.ends_at){
+const updateUserRole = async (id, role) => {
+  const user = await userRepository.getUserById(id);
+  if (!user) throw new Error('Usuario no encontrado');
 
-        const currentTime = new Date();
-        const startCampaign = new Date(campaignData.starts_at);
-        const endCampaign = new Date(campaignData.ends_at);
+  const validRoles = ['admin', 'creator', 'respondent'];
+  if (!validRoles.includes(role)) throw new Error('Rol invalido');
 
-        if(isNaN(startCampaign.getTime()) || isNaN(endCampaign.getTime())){
-            throw new Error('Formato de fecha invalido');
-        }
+  const updated = await userRepository.updateUserById(id, { role });
+  if (!updated) throw new Error('No se pudo actualizar el rol, intente nuevamente');
 
-        if(startCampaign < currentTime) throw new Error('Fecha de inicio no puede ser pasada a fecha actual');
-        if(endCampaign < currentTime) throw new Error('La fecha de finalizacion no puede ser pasada a la fecha actual');
-        if(endCampaign < startCampaign) throw new Error('La fecha de finalizacion no puede ser pasada a la fecha de inicio');
+  return { id: updated.id, email: updated.email, full_name: updated.full_name, role: updated.role };
+};
 
-    }else{
-        campaignData.starts_at = null;
-        campaignData.ends_at = null;
-    }
+const toggleUserActive = async (id) => {
+  const user = await userRepository.getUserById(id);
+  if (!user) throw new Error('Usuario no encontrado');
 
-    try {
-        const result = await createCampaign({
-            name: campaignData.name,
-            description: campaignData.description?? 'Sin descripcion',
-            starts_at: campaignData.starts_at,
-            ends_at: campaignData.ends_at
-        }, ownerId);
+  const updated = await userRepository.updateUserById(id, { is_active: !user.is_active });
+  if (!updated) throw new Error('No se pudo cambiar el estado del usuario, intente nuevamente');
 
-        return {
-            message: 'Campaha creada exitosamente'
-        }
+  return { id: updated.id, email: updated.email, full_name: updated.full_name, is_active: updated.is_active };
+};
 
-    } catch (error) {
-        throw error;
-    }
-   
-   
-
-   
-}
-module.exports = {
-    getUserCampaignsService,
-    createCampaignService
-}
-    
-    mas de lo mismo .... 
-*/
+module.exports = { getAllUsers, getUserById, searchUsers, updateUserRole, toggleUserActive };

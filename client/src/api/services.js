@@ -61,10 +61,11 @@ export const reportsApi = {
 
 // Users
 export const usersApi = {
-  getAll: () => api.get('/users'),
-  getById: (id) => api.get(`/users/${id}`),
-  updateRole: (id, role) => api.patch(`/users/${id}/role`, { role }),
-  toggleActive: (id) => api.patch(`/users/${id}/toggle-active`),
+  getAll:        ()              => api.get('/users'),
+  getById:       (id)            => api.get(`/users/${id}`),
+  searchByEmail: (email)         => api.get(`/users/search?email=${encodeURIComponent(email)}`),
+  updateRole:    (id, role)      => api.patch(`/users/${id}/role`, { role }),
+  toggleActive:  (id)            => api.patch(`/users/${id}/toggle-active`),
 }
 
 // Invitations
@@ -74,3 +75,5 @@ export const invitationsApi = {
   remove: (id) => api.delete(`/invitations/${id}`),
   validate: (formId, token) => api.get(`/invitations/form/${formId}/validate?token=${token}`),
 }
+
+
