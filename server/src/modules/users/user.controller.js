@@ -1,41 +1,50 @@
-/*const {getUserCampaignsService, createCampaignService} = require('./user.service.js');
+const userService = require('./user.service.js');
 
-async function getMyCampaigns(req, res, next){
-    const {id} = req.user;
+const getAll = async (req, res) => {
+  try {
+    const users = await userService.getAllUsers();
+    return res.status(200).json(users);
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
 
-    try {
-        const result = await getUserCampaignsService(id);
-        return res.status(200).json({campaigns: result});
-    } catch (error) {
-       return next(error);
-    }
-}
+const getById = async (req, res) => {
+  try {
+    const user = await userService.getUserById(req.params.id);
+    return res.status(200).json(user);
+  } catch (error) {
+    return res.status(404).json({ message: error.message });
+  }
+};
 
-async function createCampaign(req, res, next){
+const search = async (req, res) => {
+  try {
+    const { email } = req.query;
+    const users = await userService.searchUsers(email);
+    return res.status(200).json(users);
+  } catch (error) {
+    return res.status(400).json({ message: error.message });
+  }
+};
 
-    const {id} = req.user;
-    
-    try {
+const updateRole = async (req, res) => {
+  try {
+    const { role } = req.body;
+    const user = await userService.updateUserRole(req.params.id, role);
+    return res.status(200).json(user);
+  } catch (error) {
+    return res.status(400).json({ message: error.message });
+  }
+};
 
-        const result = await createCampaignService(req.body, id);
-        return res.status(201).json(result);
+const toggleActive = async (req, res) => {
+  try {
+    const user = await userService.toggleUserActive(req.params.id);
+    return res.status(200).json(user);
+  } catch (error) {
+    return res.status(400).json({ message: error.message });
+  }
+};
 
-    } catch (error) {
-        if(error.message === 'Nombre de campaha es obligatorio' ||
-            error.message === 'Formato de fecha invalido' || 
-            error.message === 'Fecha de inicio no puede ser pasada a fecha actual' ||
-            error.message === 'La fecha de finalizacion no puede ser pasada a la fecha actual' ||
-            error.message === 'La fecha de finalizacion no puede ser pasada a la fecha de inicio'
-        ){
-            return res.status(400).json({message: error.message});
-        }
-        return next(error);
-    }
-}
-module.exports = {
-    getMyCampaigns,
-    createCampaign
-}
-mas de lo mismo xdd     
-
-*/
+module.exports = { getAll, getById, search, updateRole, toggleActive };

@@ -8,7 +8,7 @@ router.use(authenticate)
 
 router.get('/',                              authorize('admin', 'creator'), getAll)
 router.get('/:id',                           authorize('admin', 'creator'), getById)
-router.post('/',                             authorize('creator'), create)
+router.post('/',                             authorize('admin', 'creator'), create)
 router.put('/:id',                           authorize('admin', 'creator'), update)
 router.delete('/:id',                        authorize('admin', 'creator'), remove)
 router.post('/:id/duplicate',                authorize('admin', 'creator'), duplicateController)
