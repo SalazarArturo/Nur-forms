@@ -100,6 +100,11 @@ const createService = async (campaignData, ownerId) => {
             ends_at: campaignData.ends_at
         }, ownerId);
 
+        await CampaignMember.create({
+          campaign_id: result.id,
+          user_id: ownerId,
+          role: 'owner'
+        });
         return {
             message: 'Campaha creada exitosamente'
         }
