@@ -32,8 +32,14 @@ const getAllService = async (role, userId) => {
         getAsMemberCampaigns(userId)
       ]);
       // Combinar ambas listas en un solo array
-      const allCampaigns = [...ownCampaigns, ...memberCampaigns];
-      return allCampaigns;
+      const merged = [...ownCampaigns, ...memberCampaigns];
+
+      const uniqueCampaigns = merged.filter(
+        (campaign, index, self) =>
+          index === self.findIndex(c => c.id === campaign.id)
+      );
+
+return uniqueCampaigns;
 
     } catch (error) {
       throw error
@@ -49,7 +55,7 @@ const getByIdService = async (campaignId, userId, userRole) => {
 
       if(userRole === 'creator'){
 
-        const isOwner = campaignExist.created_by === userId;
+        const isOwner = String(campaignExist.created_by) === String(userId);
         const membership = await getMembership(campaignId, userId);
 
         if(!isOwner && !membership) throw new Error('No tiene acceso a esta campaña');
@@ -183,9 +189,11 @@ const removeService = async (id, userId, userRole) => {
     }
 
     const currentStatus = existResult.status;
-    if(currentStatus !== 'closed' && currentStatus !== 'archived'){
-      throw new Error('Estado de campaña invalido para eliminacion, cambie el estado para poder proceder');
-    }
+    if(currentStatus === 'active'){
+      throw new Error(
+        'No se puede eliminar una campaña activa'
+      );
+}
 
     const userMembership = await getMembership(id, userId);
     if(!userMembership){

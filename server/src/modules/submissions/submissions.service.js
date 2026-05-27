@@ -2,7 +2,9 @@ const { Submission, Answer, Form, Invitation, Question, NotificationSetting, Use
 const { sendThresholdNotification, sendSubmissionConfirmation } = require('../../utils/mailer')
 
 const start = async (formId, userId, invitationToken, ipAddress) => {
-  const form = await Form.findByPk(formId)
+  const form = await Form.findOne({
+  where: { public_token: formId }
+})
   if (!form) throw new Error('Formulario no encontrado')
   if (form.status !== 'published') throw new Error('Este formulario no está disponible')
 
@@ -13,7 +15,7 @@ const start = async (formId, userId, invitationToken, ipAddress) => {
   let invitationId = null
   if (form.access_type === 'private') {
     if (!invitationToken) throw new Error('Se requiere token de invitación')
-    const invitation = await Invitation.findOne({ where: { form_id: formId, token: invitationToken } })
+    const invitation = await Invitation.findOne({ where: {  form_id: form.id, token: invitationToken } })
     if (!invitation) throw new Error('Token de invitación inválido')
     if (invitation.status === 'submitted') throw new Error('Esta invitación ya fue usada')
     invitationId = invitation.id
@@ -21,15 +23,15 @@ const start = async (formId, userId, invitationToken, ipAddress) => {
   }
 
   if (form.max_responses_per_user === 1 && userId) {
-    const existing = await Submission.findOne({ where: { form_id: formId, user_id: userId, is_complete: true } })
+    const existing = await Submission.findOne({ where: { form_id: form.id, user_id: userId, is_complete: true } })
     if (existing) throw new Error('Ya respondiste este formulario')
   }
 
-  const draft = await Submission.findOne({ where: { form_id: formId, user_id: userId || null, is_draft: true } })
+  const draft = await Submission.findOne({ where: { form_id: form.id, user_id: userId || null, is_draft: true } })
   if (draft) return draft
 
   return Submission.create({
-    form_id: formId,
+    form_id: form.id,
     user_id: form.anonymous_mode ? null : userId,
     invitation_id: invitationId,
     ip_address: ipAddress,
@@ -104,7 +106,7 @@ const getByForm = async (formId, userId, userRole) => {
   if (!form) throw new Error('Formulario no encontrado')
 
   return Submission.findAll({
-    where: { form_id: formId, is_complete: true },
+    where: { form_id: form.id, is_complete: true },
     include: [
       { model: Answer, as: 'answers' },
       { model: User, as: 'user', attributes: ['id', 'full_name', 'email'] }

@@ -71,11 +71,12 @@ const seed = async () => {
     ]
 
     for (const code of studentCodes) {
-      await User.create({
-        email: `${code}@nur.edu.bo`,
-        password_hash: studentPassword,
-        full_name: `Estudiante ${code}`
-    })
+     await User.create({
+    email: `${code}@nur.edu.bo`,
+    password_hash: studentPassword,
+    full_name: `Estudiante ${code}`,
+    role: 'respondent'
+})
 
       console.log(`Creado: ${code}@nur.edu.bo`)
     }

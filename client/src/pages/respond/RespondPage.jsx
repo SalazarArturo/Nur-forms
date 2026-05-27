@@ -2,11 +2,12 @@ import { useEffect, useState, useRef } from 'react'
 import { useParams } from 'react-router-dom'
 import { formsApi, submissionsApi } from '../../api/services'
 import { Loading, Alert } from '../../components/ui'
+import { useSearchParams } from 'react-router-dom'
 import logo from '../../assets/nur_logo.png'
 import './Respond.css'
 
 export default function RespondPage() {
-  const { formId } = useParams()
+  
   
   const [searchParams] = useSearchParams()
   const invitationToken = searchParams.get('token') || null
@@ -22,9 +23,10 @@ export default function RespondPage() {
   const [submitting, setSubmitting] = useState(false)
   const [validationErrors, setValidationErrors] = useState({})
   const [currentPage, setCurrentPage] = useState(0)
+  const { token } = useParams()
 
   useEffect(() => {
-    formsApi.getPublic(formId)
+    formsApi.getPublic(token)
       .then(r => {
         const f = r.data
         setForm(f)
@@ -38,11 +40,11 @@ export default function RespondPage() {
         setStep('error')
       })
       .finally(() => setLoading(false))
-  }, [formId])
+  }, [token])
 
   const startSubmission = async () => {
     try {
-      const res = await submissionsApi.start(formId, { invitationToken })
+      const res = await submissionsApi.start(token, { invitationToken })
       setSubmission(res.data)
       setRespondentToken(res.data.respondent_token)
       setStep('answering')
@@ -111,7 +113,7 @@ export default function RespondPage() {
       let rToken = respondentToken
 
       if (!subId) {
-        const res = await submissionsApi.start(formId, {invitationToken})
+        const res = await submissionsApi.start(token, {invitationToken})
         subId = res.data.id
         rToken = res.data.respondent_token
       }

@@ -36,12 +36,18 @@ async function getAsMemberCampaigns(memberId){
 }
 
 async function createCampaign(campaignData, ownerId){
-    try {
-        const result = await campaignModel.create({...campaignData, created_by: ownerId});
-        return result;
-    } catch (error) {
-        throw error;
-    }
+    const campaign = await campaignModel.create({
+        ...campaignData,
+        created_by: ownerId
+    });
+
+    await campaignMemberModel.create({
+        campaign_id: campaign.id,
+        user_id: ownerId,
+        role: 'owner'
+    });
+
+    return campaign;
 }
 
 async function getCampaignDetails(id){

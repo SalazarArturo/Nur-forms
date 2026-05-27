@@ -30,8 +30,8 @@ export default function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/login" element={<LoginPage />} />
-        <Route path="/responder/:formId" element={<RespondPage />} />
-        <Route path="/" element={<PrivateRoute roles={['admin','creator']}><DashboardPage /></PrivateRoute>} />
+        <Route path="/respond/:token" element={<RespondPage />} />
+        <Route path="/" element={<PrivateRoute roles={['admin','creator', 'respondent']}><DashboardPage /></PrivateRoute>} />
         <Route path="/campaigns" element={<PrivateRoute roles={['admin','creator']}><CampaignsPage /></PrivateRoute>} />
         <Route path="/campaigns/:id" element={<PrivateRoute roles={['admin','creator']}><CampaignDetailPage /></PrivateRoute>} />
         <Route path="/campaigns/:campaignId/forms/:formId/edit" element={<PrivateRoute roles={['admin','creator']}><FormBuilderPage /></PrivateRoute>} />

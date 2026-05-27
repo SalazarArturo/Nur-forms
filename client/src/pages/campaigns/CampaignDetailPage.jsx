@@ -129,7 +129,7 @@ export default function CampaignDetailPage() {
     } catch {}
   }
 
-  const shareUrl = (formId) => `${window.location.origin}/respond/${formId}`
+  const shareUrl = (publicToken) => `${window.location.origin}/respond/${publicToken}`
 
   if (loading) return <Loading full />
   if (!campaign) return null
@@ -203,11 +203,11 @@ export default function CampaignDetailPage() {
                       <input
                         type="text"
                         readOnly
-                        value={shareUrl(f.id)}
+                        value={shareUrl(f.public_token)}
                         style={{ fontSize: 11, height: 26, background: 'var(--bg-subtle)', border: '1px solid var(--border)', borderRadius: 4, padding: '0 6px', width: 340, cursor: 'text', color: 'var(--text-muted)' }}
                         onClick={e => e.target.select()}
                       />
-                      <button className="btn btn-ghost btn-sm" onClick={() => { navigator.clipboard.writeText(shareUrl(f.id)) }}>
+                      <button className="btn btn-ghost btn-sm" onClick={() => { navigator.clipboard.writeText(shareUrl(f.public_token)) }}>
                         Copiar
                       </button>
                     </div>

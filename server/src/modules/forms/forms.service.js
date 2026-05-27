@@ -45,21 +45,32 @@ const getById = async (id, userId, userRole) => {
 }
 
 const getByToken = async (token) => {
+  console.log('Buscando formulario con token:', token)
   const form = await Form.findOne({
-    where: { id: token },
+    where: { public_token: token },
     include: [{
       model: Question,
       as: 'questions',
-      include: [{ model: Option, as: 'options', order: [['position', 'ASC']] }],
-      order: [['position', 'ASC']]
+      include: [{ model: Option, as: 'options' }]
     }]
   })
+   console.log('Formulario encontrado:', form ? `id=${form.id} status=${form.status}` : 'NULL')
+
   if (!form) throw new Error('Formulario no encontrado')
-  if (form.status !== 'published') throw new Error('Este formulario no está disponible')
+
+  if (form.status !== 'published') {
+    throw new Error('Este formulario no está disponible')
+  }
 
   const now = new Date()
-  if (form.opens_at && now < form.opens_at) throw new Error('Este formulario aún no está abierto')
-  if (form.closes_at && now > form.closes_at) throw new Error('Este formulario ya cerró')
+
+  if (form.opens_at && now < form.opens_at) {
+    throw new Error('Este formulario aún no está abierto')
+  }
+
+  if (form.closes_at && now > form.closes_at) {
+    throw new Error('Este formulario ya cerró')
+  }
 
   return form
 }

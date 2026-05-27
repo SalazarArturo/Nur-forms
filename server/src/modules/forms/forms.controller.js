@@ -20,7 +20,7 @@ const getById = async (req, res) => {
 
 const getByToken = async (req, res) => {
   try {
-    const form = await formsService.getByToken(req.params.id)
+    const form = await formsService.getByToken(req.params.token)
     res.status(200).json(form)
   } catch (error) {
     res.status(404).json({ message: error.message })
