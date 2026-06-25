@@ -53,4 +53,15 @@ const sendSubmissionConfirmation = async ({ to, formTitle }) => {
   })
 }
 
-module.exports = { sendMail, sendInvitation, sendThresholdNotification, sendSubmissionConfirmation }
+const sendFormClosedNotification = async ({ to, formTitle }) => {
+  return sendMail({
+    to,
+    subject: `Tu encuesta "${formTitle}" ha sido cerrada`,
+    html: `
+      <h2>Notificación de cierre</h2>
+      <p>Tu encuesta <strong>${formTitle}</strong> se ha cerrado y ya no aceptará más respuestas.</p>
+    `
+  })
+}
+
+module.exports = { sendMail, sendInvitation, sendThresholdNotification, sendSubmissionConfirmation, sendFormClosedNotification }

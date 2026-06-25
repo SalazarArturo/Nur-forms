@@ -89,7 +89,7 @@ const getByQuestion = async (formId, userId, userRole) => {
 const getIndividual = async (formId, userId, userRole) => {
   await checkAccess(formId, userId, userRole)
 
-  return Submission.findAll({
+  const submissions = await Submission.findAll({
     where: { form_id: formId, is_complete: true },
     include: [{
       model: Answer,
@@ -98,6 +98,23 @@ const getIndividual = async (formId, userId, userRole) => {
     }],
     order: [['submitted_at', 'DESC']]
   })
+
+  const options = await Option.findAll({
+    include: [{ model: Question, as: 'question', where: { form_id: formId }, attributes: [] }]
+  })
+  const optionsMap = {}
+  options.forEach(o => { optionsMap[o.id] = o.text })
+
+  const rawSubmissions = submissions.map(sub => sub.get({ plain: true }))
+  for (const sub of rawSubmissions) {
+    for (const ans of sub.answers) {
+      if (ans.question && ['single_choice', 'multiple_choice'].includes(ans.question.type) && ans.selected_option_ids) {
+        ans.selected_option_ids = ans.selected_option_ids.map(id => optionsMap[id] || id)
+      }
+    }
+  }
+
+  return rawSubmissions
 }
 
 const exportCSV = async (formId, userId, userRole) => {
@@ -114,6 +131,12 @@ const exportCSV = async (formId, userId, userRole) => {
     order: [['submitted_at', 'ASC']]
   })
 
+  const options = await Option.findAll({
+    include: [{ model: Question, as: 'question', where: { form_id: formId }, attributes: [] }]
+  })
+  const optionsMap = {}
+  options.forEach(o => { optionsMap[o.id] = o.text })
+
   const headers = ['submission_id', 'submitted_at', 'ip_address', ...questions.map(q => q.text)]
   const rows = []
 
@@ -125,7 +148,10 @@ const exportCSV = async (formId, userId, userRole) => {
 
       if (ans.text_value)                      row.push(ans.text_value)
       else if (ans.boolean_value !== null)     row.push(ans.boolean_value ? 'Verdadero' : 'Falso')
-      else if (ans.selected_option_ids.length) row.push(ans.selected_option_ids.join('|'))
+      else if (ans.selected_option_ids.length) {
+        const texts = ans.selected_option_ids.map(id => optionsMap[id] || id)
+        row.push(texts.join('|'))
+      }
       else if (ans.matching_pairs.length)      row.push(JSON.stringify(ans.matching_pairs))
       else                                     row.push('')
     }

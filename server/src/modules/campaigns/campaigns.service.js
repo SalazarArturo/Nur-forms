@@ -68,7 +68,7 @@ const createService = async (campaignData, ownerId) => {
    // const { name, description, starts_at, ends_at } = req.body;
   
    if(campaignData.name.trim() == ''){
-    throw new Error('Nombre de campaha es obligatorio');
+    throw new Error('Nombre de campaña es obligatorio');
    }
 
    if(campaignData.starts_at && campaignData.ends_at){
@@ -80,12 +80,12 @@ const createService = async (campaignData, ownerId) => {
         const endCampaign = new Date(campaignData.ends_at + 'T00:00:00')
 
         if(isNaN(startCampaign.getTime()) || isNaN(endCampaign.getTime())){
-            throw new Error('Formato de fecha invalido');
+            throw new Error('Formato de fecha inválido');
         }
 
         if(startCampaign < currentTime) throw new Error('Fecha de inicio no puede ser pasada a fecha actual');
-        if(endCampaign < currentTime) throw new Error('La fecha de finalizacion no puede ser pasada a la fecha actual');
-        if(endCampaign < startCampaign) throw new Error('La fecha de finalizacion no puede ser pasada a la fecha de inicio');
+        if(endCampaign < currentTime) throw new Error('La fecha de finalización no puede ser pasada a la fecha actual');
+        if(endCampaign < startCampaign) throw new Error('La fecha de finalización no puede ser pasada a la fecha de inicio');
 
     }else{
         campaignData.starts_at = null;
@@ -102,7 +102,7 @@ const createService = async (campaignData, ownerId) => {
 
         await insertMember(result.id, ownerId, 'owner');
         return {
-            message: 'Campaha creada exitosamente'
+            message: 'Campaña creada exitosamente'
         }
 
     } catch (error) {
@@ -113,9 +113,9 @@ const createService = async (campaignData, ownerId) => {
 const updateService = async (id, data, userId, userRole) => {
   try {
     const campaign = await getCampaignById(id);
-    if (!campaign) throw new Error('Campana inexistente');
+    if (!campaign) throw new Error('Campaña inexistente');
  
-    if (campaign.status === 'archived') throw new Error('Esta campana no se puede editar');
+    if (campaign.status === 'archived') throw new Error('Esta campaña no se puede editar');
  
     const { name, description, starts_at, ends_at, status: newState } = data;
  
@@ -128,10 +128,10 @@ const updateService = async (id, data, userId, userRole) => {
         archived: []
       };
       const validValues = ['active', 'closed', 'archived', 'draft'];
-      if (!validValues.includes(newState)) throw new Error('Estado invalido');
+      if (!validValues.includes(newState)) throw new Error('Estado inválido');
  
       const isValidTransition = validTransitions[campaign.status].includes(newState);
-      if (!isValidTransition) throw new Error('Transicion de estado no permitida');
+      if (!isValidTransition) throw new Error('Transición de estado no permitida');
  
       const rows = await updateCampaignState(id, newState);
       if (rows === 0) throw new Error('No se pudo actualizar el estado, intente nuevamente');
@@ -156,8 +156,8 @@ const updateService = async (id, data, userId, userRole) => {
       if (resolvedStart && resolvedEnd) {
         const startDate = new Date(resolvedStart + 'T00:00:00');
         const endDate   = new Date(resolvedEnd   + 'T00:00:00');
-        if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) throw new Error('Formato de fecha invalido');
-        if (endDate < startDate) throw new Error('La fecha de finalizacion no puede ser anterior a la de inicio');
+        if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) throw new Error('Formato de fecha inválido');
+        if (endDate < startDate) throw new Error('La fecha de finalización no puede ser anterior a la de inicio');
       }
  
       metaUpdates.starts_at = resolvedStart;
@@ -168,7 +168,7 @@ const updateService = async (id, data, userId, userRole) => {
       await campaign.update(metaUpdates);
     }
  
-    return { message: 'Campana actualizada con exito' };
+    return { message: 'Campaña actualizada con éxito' };
  
   } catch (error) {
     throw error;
@@ -185,7 +185,7 @@ const removeService = async (id, userId, userRole) => {
 
     const currentStatus = existResult.status;
     if(currentStatus !== 'closed' && currentStatus !== 'archived' && currentStatus !== 'draft'){
-      throw new Error('Estado de campaña invalido para eliminacion, cambie el estado para poder proceder');
+      throw new Error('Estado de campaña inválido para eliminación, cambie el estado para poder proceder');
     }
 
     const userMembership = await getMembership(id, userId);
