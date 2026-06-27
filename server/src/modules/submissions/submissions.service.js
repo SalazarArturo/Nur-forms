@@ -65,12 +65,20 @@ const submit = async (submissionId, respondentToken) => {
   if (submission.is_complete) throw new Error('Este envío ya fue completado')
 
   const form = submission.form
-  const questions = await Question.findAll({ where: { form_id: form.id, is_required: true } })
+  const questions = await Question.findAll({ where: { form_id: form.id } })
   const answers = await Answer.findAll({ where: { submission_id: submissionId } })
-  const answeredIds = answers.map(a => a.question_id)
 
   for (const q of questions) {
-    if (!answeredIds.includes(q.id)) throw new Error(`La pregunta "${q.text}" es obligatoria`)
+    const ans = answers.find(a => a.question_id === q.id)
+    if (q.is_required && !ans) throw new Error(`La pregunta "${q.text}" es obligatoria`)
+
+    if (ans && q.type === 'multiple_choice') {
+      const selectedCount = ans.selected_option_ids ? ans.selected_option_ids.length : 0
+      const min = q.config?.min_choices
+      const max = q.config?.max_choices
+      if (min && selectedCount < min) throw new Error(`La pregunta "${q.text}" requiere al menos ${min} opciones`)
+      if (max && selectedCount > max) throw new Error(`La pregunta "${q.text}" permite máximo ${max} opciones`)
+    }
   }
 
   await submission.update({ is_complete: true, is_draft: false, submitted_at: new Date() })

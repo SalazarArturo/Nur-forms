@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { BarChart, Bar, XAxis, YAxis, Tooltip, PieChart, Pie, Cell, ResponsiveContainer, Legend } from 'recharts'
+import { jsPDF } from 'jspdf'
+import html2canvas from 'html2canvas'
 import { reportsApi, formsApi } from '../../api/services'
 import { Loading, Alert, StatusBadge } from '../../components/ui'
 import './Reports.css'
@@ -18,6 +20,7 @@ export default function ReportsPage() {
   const [error, setError] = useState('')
   const [tab, setTab] = useState('overview')
   const [exporting, setExporting] = useState(false)
+  const [exportingPdf, setExportingPdf] = useState(false)
 
   useEffect(() => {
     const load = async () => {
@@ -53,6 +56,28 @@ export default function ReportsPage() {
     } catch {} finally { setExporting(false) }
   }
 
+  const handleExportPDF = async () => {
+    setExportingPdf(true)
+    try {
+      const element = document.getElementById('report-content-to-pdf')
+      if (!element) return
+
+      const canvas = await html2canvas(element, { scale: 2, useCORS: true })
+      const imgData = canvas.toDataURL('image/jpeg', 1.0)
+      
+      const pdf = new jsPDF('p', 'mm', 'a4')
+      const pdfWidth = pdf.internal.pageSize.getWidth()
+      const pdfHeight = (canvas.height * pdfWidth) / canvas.width
+
+      pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight)
+      pdf.save(`reporte-${formId}.pdf`)
+    } catch (err) {
+      console.error('Error generando PDF', err)
+    } finally {
+      setExportingPdf(false)
+    }
+  }
+
   if (loading) return <Loading full />
   if (error) return <div style={{ padding: 32 }}><Alert type="error">{error}</Alert></div>
   if (!form || !summary) return null
@@ -78,16 +103,23 @@ export default function ReportsPage() {
           </div>
           <p className="text-muted" style={{ marginTop: 4 }}>Panel de resultados y análisis</p>
         </div>
-        <div className="page-actions">
-          <button className="btn btn-secondary" onClick={handleExportCSV} disabled={exporting}>
+        <div className="page-actions" style={{ display: 'flex', gap: '8px' }}>
+          <button className="btn btn-secondary" onClick={handleExportCSV} disabled={exporting || exportingPdf}>
             <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
               <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/>
             </svg>
             {exporting ? 'Exportando...' : 'Exportar CSV'}
           </button>
+          <button className="btn btn-primary" onClick={handleExportPDF} disabled={exporting || exportingPdf}>
+            <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+              <path d="M12 15V3m0 12l-4-4m4 4l4-4M2 17l.621 2.485A2 2 0 0 0 4.561 21h14.878a2 2 0 0 0 1.94-1.515L22 17"></path>
+            </svg>
+            {exportingPdf ? 'Generando PDF...' : 'Exportar PDF'}
+          </button>
         </div>
       </div>
 
+      <div id="report-content-to-pdf">
       {/* Summary cards */}
       <div className="reports-summary">
         <SummaryCard label="Total respuestas" value={summary.total_submissions} color="brand" />
@@ -167,6 +199,7 @@ export default function ReportsPage() {
           ))}
         </div>
       )}
+      </div>
     </div>
   )
 }

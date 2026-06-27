@@ -1,4 +1,5 @@
-const { Form, Question, Option, CampaignMember, NotificationSetting, Submission } = require('../../models')
+const { Form, Question, Option, CampaignMember, NotificationSetting, Submission, User } = require('../../models')
+const { sendFormClosedNotification } = require('../../utils/mailer')
 
 const checkAccess = async (formId, userId, userRole, requiredRoles = ['owner', 'editor']) => {
   const form = await Form.findByPk(formId)
@@ -131,6 +132,15 @@ const publish = async (id, userId, userRole) => {
 const close = async (id, userId, userRole) => {
   const form = await checkAccess(id, userId, userRole)
   await form.update({ status: 'closed' })
+
+  const settings = await NotificationSetting.findOne({ where: { form_id: form.id } })
+  if (settings && settings.notify_on_close) {
+    const creator = await User.findByPk(form.created_by)
+    if (creator) {
+      await sendFormClosedNotification({ to: creator.email, formTitle: form.title })
+    }
+  }
+
   return form
 }
 

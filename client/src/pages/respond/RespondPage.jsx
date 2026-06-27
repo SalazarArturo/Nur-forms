@@ -76,11 +76,44 @@ export default function RespondPage() {
     return errs
   }
 
-  const paginatedQuestions = form?.paginate_sections
-    ? [questions] // simple: all in one page for now; could split by sections
-    : [questions]
+  const getPaginatedQuestions = () => {
+    if (!form?.paginate_sections || questions.length === 0) return [questions]
+    const pages = []
+    let currentSectionId = questions[0].section_id || 'no-section'
+    let currentPage = []
+    for (const q of questions) {
+      const qSec = q.section_id || 'no-section'
+      if (qSec === currentSectionId) {
+        currentPage.push(q)
+      } else {
+        pages.push(currentPage)
+        currentSectionId = qSec
+        currentPage = [q]
+      }
+    }
+    if (currentPage.length > 0) pages.push(currentPage)
+    return pages
+  }
 
+  const paginatedQuestions = getPaginatedQuestions()
   const currentPageQuestions = paginatedQuestions[currentPage] || []
+
+  const handleNextPage = () => {
+    const errs = validate(currentPageQuestions)
+    if (Object.keys(errs).length > 0) {
+      setValidationErrors(errs)
+      const firstErrId = Object.keys(errs)[0]
+      document.getElementById(`q-${firstErrId}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      return
+    }
+    setCurrentPage(p => Math.min(p + 1, paginatedQuestions.length - 1))
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
+
+  const handlePrevPage = () => {
+    setCurrentPage(p => Math.max(p - 1, 0))
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
 
   const buildAnswersPayload = () => {
     return questions.map(q => {
@@ -199,16 +232,41 @@ export default function RespondPage() {
 
             {error && <Alert type="error">{error}</Alert>}
 
-            <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 24 }}>
-              <button
-                className="btn btn-lg"
-                style={{ background: primaryColor, color: '#fff', border: 'none', minWidth: 160 }}
-                onClick={handleSubmit}
-                disabled={submitting}
-              >
-                {submitting ? <span className="spinner" style={{ width: 16, height: 16, borderWidth: 2, borderTopColor: '#fff' }} /> : null}
-                {submitting ? 'Enviando...' : 'Enviar respuestas'}
-              </button>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 24 }}>
+              <div>
+                {paginatedQuestions.length > 1 && currentPage > 0 && (
+                  <button
+                    className="btn btn-secondary btn-lg"
+                    style={{ minWidth: 120 }}
+                    onClick={handlePrevPage}
+                    disabled={submitting}
+                  >
+                    Anterior
+                  </button>
+                )}
+              </div>
+              
+              {currentPage === paginatedQuestions.length - 1 ? (
+                <button
+                  id="submitAnswersBtn"
+                  className="btn btn-lg"
+                  style={{ background: primaryColor, color: '#fff', border: 'none', minWidth: 160 }}
+                  onClick={handleSubmit}
+                  disabled={submitting}
+                >
+                  {submitting ? <span className="spinner" style={{ width: 16, height: 16, borderWidth: 2, borderTopColor: '#fff' }} /> : null}
+                  {submitting ? 'Enviando...' : 'Enviar respuestas'}
+                </button>
+              ) : (
+                <button
+                  className="btn btn-lg"
+                  style={{ background: primaryColor, color: '#fff', border: 'none', minWidth: 160 }}
+                  onClick={handleNextPage}
+                  disabled={submitting}
+                >
+                  Siguiente
+                </button>
+              )}
             </div>
           </>
         )}
@@ -269,7 +327,7 @@ function QuestionResponder({ question: q, index, answer = {}, onChange, error, p
         <div className="respond-options">
           {(q.options || []).map(opt => (
             <label key={opt.id} className={`respond-option${answer.selected_option_ids?.includes(opt.id) ? ' respond-option--selected' : ''}`} style={answer.selected_option_ids?.includes(opt.id) ? { borderColor: primaryColor, background: `${primaryColor}10` } : {}}>
-              <input type="radio" name={q.id} checked={answer.selected_option_ids?.includes(opt.id) || false} onChange={() => handleSingleChoice(opt.id)} />
+              <input id={`radio-${q.id}-${opt.id}`} type="radio" name={q.id} checked={answer.selected_option_ids?.includes(opt.id) || false} onChange={() => handleSingleChoice(opt.id)} />
               {opt.text}
             </label>
           ))}
@@ -281,7 +339,7 @@ function QuestionResponder({ question: q, index, answer = {}, onChange, error, p
         <div className="respond-options">
           {(q.options || []).map(opt => (
             <label key={opt.id} className={`respond-option${answer.selected_option_ids?.includes(opt.id) ? ' respond-option--selected' : ''}`} style={answer.selected_option_ids?.includes(opt.id) ? { borderColor: primaryColor, background: `${primaryColor}10` } : {}}>
-              <input type="checkbox" checked={answer.selected_option_ids?.includes(opt.id) || false} onChange={e => handleMultipleChoice(opt.id, e.target.checked)} />
+              <input id={`checkbox-${q.id}-${opt.id}`} type="checkbox" checked={answer.selected_option_ids?.includes(opt.id) || false} onChange={e => handleMultipleChoice(opt.id, e.target.checked)} />
               {opt.text}
             </label>
           ))}
@@ -293,7 +351,7 @@ function QuestionResponder({ question: q, index, answer = {}, onChange, error, p
         <div className="respond-options respond-options--row">
           {[{ label: 'Verdadero', value: true }, { label: 'Falso', value: false }].map(opt => (
             <label key={String(opt.value)} className={`respond-option${answer.boolean_value === opt.value ? ' respond-option--selected' : ''}`} style={answer.boolean_value === opt.value ? { borderColor: primaryColor, background: `${primaryColor}10` } : {}}>
-              <input type="radio" name={q.id} checked={answer.boolean_value === opt.value} onChange={() => onChange({ boolean_value: opt.value })} />
+              <input id={`tf-${q.id}-${opt.value}`} type="radio" name={q.id} checked={answer.boolean_value === opt.value} onChange={() => onChange({ boolean_value: opt.value })} />
               {opt.label}
             </label>
           ))}
@@ -303,6 +361,7 @@ function QuestionResponder({ question: q, index, answer = {}, onChange, error, p
       {/* Short text */}
       {q.type === 'short_text' && (
         <input
+          id={`shortText-${q.id}`}
           type="text"
           value={answer.text_value || ''}
           onChange={e => onChange({ text_value: e.target.value })}
@@ -314,6 +373,7 @@ function QuestionResponder({ question: q, index, answer = {}, onChange, error, p
       {/* Long text */}
       {q.type === 'long_text' && (
         <textarea
+          id={`longText-${q.id}`}
           value={answer.text_value || ''}
           onChange={e => onChange({ text_value: e.target.value })}
           placeholder={q.config?.placeholder || 'Tu respuesta...'}
@@ -330,6 +390,7 @@ function QuestionResponder({ question: q, index, answer = {}, onChange, error, p
               <div className="respond-matching__concept">{pair.concept}</div>
               <div className="respond-matching__arrow">→</div>
               <select
+                id={`match-${q.id}-${idx}`}
                 value={getMatchingAnswer(pair.concept)}
                 onChange={e => handleMatchingPair(idx, e.target.value)}
                 style={{ flex: 1 }}

@@ -122,6 +122,7 @@ export default function UsersPage() {
         </p>
         <div style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap' }}>
           <input
+            id="searchUserEmail"
             ref={searchRef}
             type="email"
             placeholder="764590@nur.edu.bo"
@@ -130,7 +131,7 @@ export default function UsersPage() {
             onKeyDown={e => e.key === 'Enter' && handleSearch()}
             style={{ maxWidth: 300, flex: '1 1 200px' }}
           />
-          <button className="btn btn-primary btn-sm" onClick={handleSearch} disabled={searching || !searchEmail.trim()}>
+          <button id="searchUserBtn" className="btn btn-primary btn-sm" onClick={handleSearch} disabled={searching || !searchEmail.trim()}>
             {searching ? 'Buscando…' : 'Buscar'}
           </button>
           {searchResults !== null && (
@@ -190,13 +191,13 @@ export default function UsersPage() {
             </p>
             <div className="field">
               <label>Nuevo rol</label>
-              <select value={newRole} onChange={e => setNewRole(e.target.value)}>
+              <select id="roleSelect" value={newRole} onChange={e => setNewRole(e.target.value)}>
                 {ROLES.map(r => <option key={r} value={r}>{ROLE_LABELS[r]}</option>)}
               </select>
             </div>
             <div className="modal__footer">
-              <button className="btn btn-secondary" onClick={() => setRoleModal(null)}>Cancelar</button>
-              <button className="btn btn-primary" onClick={handleSaveRole} disabled={savingRole || newRole === roleModal.role}>
+              <button id="cancelRoleBtn" className="btn btn-secondary" onClick={() => setRoleModal(null)}>Cancelar</button>
+              <button id="saveRoleBtn" className="btn btn-primary" onClick={handleSaveRole} disabled={savingRole || newRole === roleModal.role}>
                 {savingRole ? 'Guardando…' : 'Guardar'}
               </button>
             </div>
@@ -270,10 +271,11 @@ function UserTable({ users, onRole, onToggle, compact = false }) {
               </td>
               <td>
                 <div style={{ display: 'flex', gap: 6 }}>
-                  <button className="btn btn-secondary btn-sm" onClick={() => onRole(u)}>
+                  <button id={`roleBtn-${u.id}`} className="btn btn-secondary btn-sm" onClick={() => onRole(u)}>
                     Rol
                   </button>
                   <button
+                    id={`toggleBtn-${u.id}`}
                     className={`btn btn-sm ${u.is_active ? 'btn-danger' : 'btn-secondary'}`}
                     onClick={() => onToggle(u)}
                   >
