@@ -7,6 +7,7 @@ const campaignModel = require('../../src/models/Campaign.js');
 const userModel = require('../../src/models/User.js');
 const campaignMemberModel = require('../../src/models/CampaignMember.js');
 const formModel = require('../../src/models/Form.js');
+const { Op } = require('sequelize')
 const campaignRepo = require('../../src/repositories/campaign-repository.js');
 
 const mockCampaign = { id: 'camp-1', name: 'Test', status: 'draft', created_by: 'user-1' };
@@ -38,8 +39,9 @@ describe('getAsMemberCampaigns', () => {
     campaignModel.findAll.mockResolvedValue([mockCampaign]);
     const result = await campaignRepo.getAsMemberCampaigns('user-2');
     expect(campaignModel.findAll).toHaveBeenCalledWith({
+      where: { created_by: { [Op.ne]: 'user-2' }},
       include: [{ model: campaignMemberModel, as: 'members', where: { user_id: 'user-2' } }]
-    });
+});
     expect(result).toEqual([mockCampaign]);
   });
 });

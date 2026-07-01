@@ -9,7 +9,8 @@
     "db:seed": "node src/seeders/users.seeder.js",
     "db-admin:seed": "node src/seeders/admin.seeder.js",
     "test": "jest",
-    "test:coverage": "jest --coverage"
+    "test:coverage": "jest --coverage",
+    "test:integration": "jest --testMatch=\"**/tests/integration/**/*.test.js\" --runInBand --forceExit"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
@@ -33,6 +34,8 @@
   },
   "jest": {
     "testEnvironment": "node",
+    "globalSetup": "./tests/integration/setup.js",
+    "globalTeardown": "./tests/integration/teardown.js",
     "coverageDirectory": "coverage",
     "collectCoverageFrom": [
       "src/**/*.js",
@@ -42,7 +45,12 @@
       "!src/models/**"
     ],
     "coverageReporters": ["text", "lcov", "html"],
-    "testMatch": ["**/tests/**/*.test.js"],
+    "testMatch": [
+      "**/tests/modules/**/*.test.js",
+      "**/tests/middlewares/**/*.test.js",
+      "**/tests/repositories/**/*.test.js",
+      "**/tests/utils/**/*.test.js"
+    ],
     "clearMocks": true,
     "moduleNameMapper": {
       "^@/(.*)$": "<rootDir>/src/$1"
