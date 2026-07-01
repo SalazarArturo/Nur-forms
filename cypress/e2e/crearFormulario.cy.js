@@ -1,18 +1,23 @@
 describe('Crear formulario', () => {
+  let createdForm = null
+
   beforeEach(() => {
-    cy.intercept('GET', '**/auth/me', {
+    cy.viewport(1440, 1200)
+    createdForm = null
+
+    cy.intercept('GET', '**/api/auth/me', {
       statusCode: 200,
       body: {
         user: {
           id: 1,
           email: 'admin@nur.edu.bo',
-          role: 'admin',
-          name: 'Admin'
+          full_name: 'Administrador NUR',
+          role: 'admin'
         }
       }
     }).as('me')
 
-    cy.intercept('GET', '**/campaigns/1', {
+    cy.intercept('GET', '**/api/campaigns/1', {
       statusCode: 200,
       body: {
         id: 1,
@@ -23,45 +28,72 @@ describe('Crear formulario', () => {
       }
     }).as('getCampaign')
 
-    cy.intercept('GET', '**/forms/campaign/1', {
-      statusCode: 200,
-      body: []
+   
+cy.intercept('GET', '**/api/forms/campaign/1', (req) => {
+      req.reply({
+        statusCode: 200,
+        body: createdForm ? [createdForm] : []
+      })
     }).as('getForms')
+
 
     cy.visit('http://localhost:5173/campaigns/1', {
       onBeforeLoad(win) {
         win.localStorage.setItem('token', 'fake-token')
       }
     })
-  })
 
-  it('debe crear un formulario desde la vista de campaña', () => {
-    cy.intercept('POST', '**/forms', (req) => {
-      expect(req.body.title).to.eq('Encuesta de prueba')
-      req.reply({
-        statusCode: 201,
-        body: {
-          id: 42,
-          title: 'Encuesta de prueba',
-          description: '',
-          campaign_id: 1,
-          access_type: 'public',
-          status: 'draft'
-        }
-      })
-    }).as('createForm')
-
+    
     cy.wait('@me')
     cy.wait('@getCampaign')
     cy.wait('@getForms')
+  })
 
-    cy.contains('button', 'Nuevo formulario').click()
-    cy.contains('Nuevo formulario').should('be.visible')
+  it('debe crear un formulario desde la vista de campaña', () => {
+    cy.intercept('POST', '**/api/forms', (req) => {
+      expect(req.body.title).to.eq('Encuesta de prueba')
 
-    cy.get('input[placeholder="Encuesta de satisfacción"]').type('Encuesta de prueba')
-    cy.contains('button', 'Crear formulario').click()
+      createdForm = {
+        id: 42,
+        title: 'Encuesta de prueba',
+        description: '',
+        campaign_id: 1,
+        access_type: 'public',
+        status: 'draft'
+      }
 
-    cy.wait('@createForm').its('response.statusCode').should('eq', 201)
-    cy.contains('Encuesta de prueba').should('be.visible')
+      req.reply({
+        statusCode: 201,
+        body: createdForm
+      })
+    }).as('createForm')
+
+   
+        // Abrir modal
+      cy.contains('button', 'Nuevo formulario')
+        .should('be.visible')
+        .click()
+
+      // Verificar modal
+      cy.contains('Nuevo formulario')
+        .should('be.visible')
+
+      // Escribir título
+      cy.get('input[placeholder="Encuesta de satisfacción"]')
+        .should('be.visible')
+        .type('Encuesta de prueba')
+
+      // Enviar el formulario desde el botón del modal
+      cy.contains('.modal__footer button', 'Crear formulario')
+        .should('be.visible')
+        .click()
+
+      cy.wait('@createForm')
+        .its('response.statusCode')
+        .should('eq', 201)
+
+  
+    cy.contains('Encuesta de prueba', { timeout: 10000 })
+      .should('exist')
   })
 })
